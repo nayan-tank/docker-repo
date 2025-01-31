@@ -1,0 +1,19 @@
+ENV vs ARG 
+==========
+- ENV is pass while running the container 
+- ARG is pass during builing the image 
+
+
+CMD vs ENTRYPOINT 
+=================
+- CMD can be overwrite 
+- ENTRYPOINT can't be overwrite
+
+ENTRYPOINT ["ping", "-c 4"]
+CMD ["www.google.com"]
+
+- If you want to overwrite entrypoint then use 
+--entrypoint <command>
+
+docker run abc --entrypoint ping www.google.com 
+
