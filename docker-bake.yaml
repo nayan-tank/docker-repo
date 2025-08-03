@@ -60,3 +60,67 @@ targets:
       NODE_ENV: production
     output:
       - type=registry
+...
+
+# docker-bake.yaml
+
+group:
+  default:
+    targets: 
+      - frontend
+      - backend
+      - database
+
+target:
+  frontend:
+    context: ./frontend
+    dockerfile: Dockerfile
+    tags:
+      - myapp/frontend:latest
+    platforms:
+      - linux/amd64
+      - linux/arm64
+    output:
+      - type=registry
+
+  backend:
+    context: ./backend
+    dockerfile: Dockerfile
+    tags:
+      - myapp/backend:latest
+    platforms:
+      - linux/amd64
+      - linux/arm64
+    output:
+      - type=registry
+
+  database:
+    context: ./database
+    dockerfile: Dockerfile
+    tags:
+      - myapp/database:latest
+    platforms:
+      - linux/amd64
+      - linux/arm64
+    output:
+      - type=registry
+...
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: myapp/frontend:latest
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: myapp/backend:latest
+
+  database:
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+    image: myapp/database:latest
