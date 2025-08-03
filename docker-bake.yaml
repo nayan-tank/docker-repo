@@ -1,0 +1,62 @@
+# compose.yaml
+services:
+  webapp-dev:
+    build: &build-dev
+      dockerfile: Dockerfile.webapp
+      tags:
+        - docker.io/username/webapp:latest
+      cache_from:
+        - docker.io/username/webapp:cache
+      cache_to:
+        - docker.io/username/webapp:cache
+
+  webapp-release:
+    build:
+      <<: *build-dev
+      x-bake:
+        platforms:
+          - linux/amd64
+          - linux/arm64
+
+  db:
+    image: docker.io/username/db
+    build:
+      dockerfile: Dockerfile.db
+
+...
+
+# docker-bake.yaml
+
+groups:
+  default:
+    targets:
+      - api-dev
+      - api-prod
+
+targets:
+  api-base:
+    context: ./backend
+    dockerfile: Dockerfile
+    platforms:
+      - linux/amd64
+      - linux/arm64
+
+  api-dev:
+    inherits:
+      - api-base
+    tags:
+      - jpmorganchase/backend:dev
+    args:
+      NODE_ENV: development
+    output:
+      - type=docker
+
+  api-prod:
+    inherits:
+      - api-base
+    tags:
+      - jpmorganchase/backend:prod
+    args:
+      NODE_ENV: production
+    output:
+      - type=registry
